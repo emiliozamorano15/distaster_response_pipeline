@@ -1,15 +1,56 @@
 import sys
 
+import pandas as pd
+from sqlalchemy import create_engine
+import sqlite3
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    '''
+    reads messages.csv and categories.csv into dataframes, merges them, 
+    and returns them as single data frame
+    INPUTS:
+        messages_filepath: str path to messages.csv
+        categories_filepath: str path to categories.csv
+    OUTPUTS:
+        df: pandas dataframe merged messages and categories df
+    '''
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    df = messages.merge(categories, how = 'left', on = 'id')
+
+    return df
 
 
 def clean_data(df):
-    pass
+    ## Split categories into separate category columns.
+    categories = df['categories'].str.split(";", expand = True)
 
+    ## select the first row of the categories dataframe and use it to get the column names
+    row = pd.DataFrame({'categories': categories.iloc[0]})
+    row['pos'] = (row['categories'].str.len())
+    category_colnames = row.apply(lambda x: x['categories'][0:x['pos']-2], axis = 1)
+    categories.columns = category_colnames
+
+    ## Convert category values to just numbers 0 or 1.
+    for column in categories:
+        categories[column] = categories[column].apply(lambda x: x[-1])  
+        categories[column] = pd.to_numeric(categories[column])
+
+    ## Replace categories column in df with new category columns    
+    df.drop(['categories'], axis = 1, inplace = True)
+    df = df.merge(categories, left_index=True, right_index=True)
+
+    # drop duplicates
+    df.drop_duplicates(inplace = True)
+    
+    return df
 
 def save_data(df, database_filename):
+    # engine = create_engine('sqlite:///' + database_filename)
+    # df.to_sql('tbl_disaster_response', engine, index=False)
+    conn = sqlite3.connect(database_filename)
+    df.to_sql('tbl_disaster_response', conn) 
+    
     pass  
 
 
