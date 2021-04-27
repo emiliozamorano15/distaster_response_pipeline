@@ -7,8 +7,13 @@ import numpy as np
 import pandas as pd
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.pipeline import Pipeline
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
+from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
@@ -23,10 +28,11 @@ def load_data(database_filepath):
     OUTPUT:
         table pandas dataframe
     '''
+    ## Read data from DB table
     conn = sqlite3.connect(database_filepath)
-    
     df = pd.read_sql("SELECT * FROM tbl_disaster_response", conn)
     
+    ## Split features and target 
     X = df.message.values
     df_Y = df.drop(['index', 'id', 'message', 'original', 'genre'], axis = 1)
     category_names = df_Y.columns
@@ -45,15 +51,19 @@ def tokenize(text):
     
     OUTPUTS: lst list of lemmatized tokens
     '''
+    ## Remove urls if present
     detected_urls = re.findall(url_regex, text)
     for url in detected_urls:
         text = text.replace(url, "urlplaceholder")
     
+    ## Remove special characters
     text = re.sub(r"[^a-zA-Z0-9]", " ", text) 
     
+    ## tokenize text by words
     tokens = word_tokenize(text)
+    
+    ## Lemmatize each token
     lemmatizer = WordNetLemmatizer()
-
     clean_tokens = []
     for tok in tokens:
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
@@ -62,14 +72,14 @@ def tokenize(text):
     return clean_tokens
     
 
-
 def build_model():
     ''' 
     Pipeline and grid definition for model building
-    INPUTS:
+    INPUTS: none
     OUTPUTS: a GridSearchCV object from scikitlearn
         
     '''
+    ## Create pipeline with two transformers and one estimator
     pipeline = Pipeline([
         ('text_features',
             Pipeline([
@@ -79,27 +89,62 @@ def build_model():
         ),
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
-    
+    ## Define gridsearch hyperparameters
     parameters = {
-        'text_features__vect__ngram_range': ((1, 1), (1, 2), (2, 2)),
-        'text_features__vect__max_df': (0.5, 0.75, 1.0),
-        'text_features__vect_max_features': (None, 5000, 10000),
-        'text_features__tfidf_use_idf': (True, False),
-        'clf__n_estimators': [50, 100, 200],
-        'clf__min_samples_split': [2, 5, 10]
+        'text_features__vect__ngram_range': ((1, 1), (1, 2))
+        , 'text_features__vect__max_df': (0.5, 0.75, 1.0)
+#         , 'text_features__vect__max_features': (None, 5000, 10000)
+#         , 'text_features__tfidf__use_idf': (True, False)
+#         , 'clf__estimator__n_estimators': [50, 100, 200]
+#         , 'clf__estimator__min_samples_split': [2, 5, 10]
     }
     
-    cv = GridSearchCV(pipeline, param_grid=parameters, scoring = 'roc_auc')
+    cv = GridSearchCV(pipeline, param_grid=parameters)
     
     return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    '''
+    Evaluate model's performance on test data
+    INPUTS:
+        model: estimator
+        X_test: feature variables
+        Y_test: target variables
+        category_names: target labels
+    OUTPUT:
+        metrics_df: pandas dataframe with performance metrics
+    '''
+    Y_pred = model.predict(X_test)
+    
+    scores = []
+    
+    # Calculate evaluation metrics for each category_name
+    for i in range(len(category_names)):
+        accuracy = accuracy_score(Y_test[:, i], Y_pred[:, i])
+        precision = precision_score(Y_test[:, i], Y_pred[:, i])
+        recall = recall_score(Y_test[:, i], Y_pred[:, i])
+        f1 = f1_score(Y_test[:, i], Y_pred[:, i])
+        
+        scores.append([accuracy, precision, recall, f1])
+  
+    metrics = np.array(scores)
+    metrics_df = pd.DataFrame(data = scores
+                              , index = category_names
+                              , columns = ['Accuracy', 'Precision', 'Recall', 'F1'])
+    return metrics_df
+      
 
 
 def save_model(model, model_filepath):
-    pass
+    '''
+    save model as pickle object
+    INPUTS:
+        model: trained estimator
+        model_filepath: str destinationm file        
+    '''
+    
+    pickle.dump(model, model_filepath)
 
 
 def main():
