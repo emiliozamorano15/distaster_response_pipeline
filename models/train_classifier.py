@@ -1,3 +1,4 @@
+  
 import sys
 import nltk
 nltk.download(['punkt', 'wordnet'])
@@ -5,6 +6,7 @@ import sqlite3
 import re
 import numpy as np
 import pandas as pd
+import pickle
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -82,25 +84,23 @@ def build_model():
     '''
     ## Create pipeline with two transformers and one estimator
     pipeline = Pipeline([
-        ('text_features',
-            Pipeline([
-                ('vect', CountVectorizer(tokenizer=tokenize)),
-                ('tfidf', TfidfTransformer())
-            ])
-        ),
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('tfidf', TfidfTransformer()),
+        ('clf', MultiOutputClassifier(
+            RandomForestClassifier(n_jobs=-1)
+            ))
     ])
     ## Define gridsearch hyperparameters
     parameters = {
-        'text_features__vect__ngram_range': ((1, 1), (1, 2))
-        , 'text_features__vect__max_df': (0.5, 0.75, 1.0)
-#         , 'text_features__vect__max_features': (None, 5000, 10000)
-#         , 'text_features__tfidf__use_idf': (True, False)
-#         , 'clf__estimator__n_estimators': [50, 100, 200]
-#         , 'clf__estimator__min_samples_split': [2, 5, 10]
+        # 'vect__ngram_range': ((1, 1), (1, 2))
+         'vect__max_df': (0.5, 1.0)
+        # , 'vect__max_features': (None, 10000)
+        , 'tfidf__use_idf': (True, False)
+        , 'clf__estimator__n_estimators': [25, 50]
+        , 'clf__estimator__min_samples_split': [2, 5, 10]
     }
     
-    cv = GridSearchCV(pipeline, param_grid=parameters)
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv= 3, verbose = 3)
     
     return cv
 
@@ -123,9 +123,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
     # Calculate evaluation metrics for each category_name
     for i in range(len(category_names)):
         accuracy = accuracy_score(Y_test[:, i], Y_pred[:, i])
-        precision = precision_score(Y_test[:, i], Y_pred[:, i])
-        recall = recall_score(Y_test[:, i], Y_pred[:, i])
-        f1 = f1_score(Y_test[:, i], Y_pred[:, i])
+        precision = precision_score(Y_test[:, i], Y_pred[:, i], average = "micro")
+        recall = recall_score(Y_test[:, i], Y_pred[:, i], average = "micro")
+        f1 = f1_score(Y_test[:, i], Y_pred[:, i], average = "micro")
         
         scores.append([accuracy, precision, recall, f1])
   
@@ -133,6 +133,8 @@ def evaluate_model(model, X_test, Y_test, category_names):
     metrics_df = pd.DataFrame(data = scores
                               , index = category_names
                               , columns = ['Accuracy', 'Precision', 'Recall', 'F1'])
+                              
+    print(metrics_df)
     return metrics_df
       
 
@@ -145,7 +147,7 @@ def save_model(model, model_filepath):
         model_filepath: str destinationm file        
     '''
     
-    pickle.dump(model, model_filepath)
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():
@@ -178,3 +180,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
