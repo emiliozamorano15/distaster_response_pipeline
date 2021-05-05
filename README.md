@@ -62,13 +62,15 @@ Running [this command](#com) **from app directory** will start the web app where
 
 **_Screenshot 1_**
 
-![Landing page](snapshots/main1.jpg)
+![Landing page](https://github.com/emiliozamorano15/distaster_response_pipeline/blob/main/snapshots/main1.JPG)
 
 What the app will do is that it will classify the text message into categories so that appropriate relief agency can be reached out for help.
 
 **_Screenshot 2_**
 
-![Visuals](snapshots/main2.jpg)
+![Visuals](https://github.com/emiliozamorano15/distaster_response_pipeline/blob/main/snapshots/main2.JPG)
+
+![Results](https://github.com/emiliozamorano15/distaster_response_pipeline/blob/main/snapshots/go1.JPG)
 
 <a id='run'></a>
 
