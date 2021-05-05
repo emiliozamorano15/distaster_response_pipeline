@@ -1,8 +1,4 @@
-# Data Scientist Nanodegree
-
-## Data Engineering
-
-## Project: Disaster Response Pipeline
+# Data Scientist Nanodegree: Disaster Response Pipeline Project
 
 ## Table of Contents
 
@@ -16,8 +12,8 @@
   - [Training Classifier](#training)
   - [Starting the Web App](#starting)
 - [Conclusion](#conclusion)
-- [Files](#files)
-- [Software Requirements](#sw)
+- [File Structure](#files)
+- [Software Requirements](#requirements)
 - [Credits and Acknowledgements](#credits)
 
 ***
@@ -35,7 +31,6 @@
 
 
 <a id='etl_pipeline'></a>
-
 ### 2.1. ETL Pipeline
 
 File _data/process_data.py_ contains data cleaning pipeline that:
@@ -46,7 +41,6 @@ File _data/process_data.py_ contains data cleaning pipeline that:
 - Stores it in a **SQLite database**
 
 <a id='ml_pipeline'></a>
-
 ### 2.2. ML Pipeline
 
 File _models/train_classifier.py_ contains machine learning pipeline that:
@@ -60,7 +54,7 @@ File _models/train_classifier.py_ contains machine learning pipeline that:
 
 <a id='flask'></a>
 
-### 2.3. Flask Web App
+### 2.3. Web App
 
 <a id='eg'></a>
 
@@ -80,87 +74,17 @@ What the app will do is that it will classify the text message into categories s
 
 ## 3. Running
 
-There are three steps to get up and runnning with the web app if you want to start from ETL process.
+1. Run the following commands in the project's root directory to set up your database and model.
 
-<a id='cleaning'></a>
+    - To run ETL pipeline that cleans data and stores in database
+        `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
+    - To run ML pipeline that trains classifier and saves
+        `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
 
-### 3.1. Data Cleaning
-
-**Go to the project directory** and the run the following command:
-
-```bat
-python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
-```
-
-The first two arguments are input data and the third argument is the SQLite Database in which we want to save the cleaned data. The ETL pipeline is in _process_data.py_.
-
-_DisasterResponse.db_ already exists in _data_ folder but the above command will still run and replace the file with same information. 
-
-**_Screenshot 3_**
-
-![process_data](img/process_data.jpg)
-
-<a id='training'></a>
-
-### 3.2. Training Classifier
-
-After the data cleaning process, run this command **from the project directory**:
-
-```bat
-python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl
-```
-
-This will use cleaned data to train the model, improve the model with grid search and saved the model to a pickle file (_classifer.pkl_).
-
-_classifier.pkl_ already exists but the above command will still run and replace the file will same information.
-
-_**Screenshot 4**_
-
-![train_classifier_1](img/train_classifier_1.jpg)
-
-It took me around **4 minutes** to train the classifier with grid search.
-
-When the models is saved, it will look something like this.
-
-<a id='acc'></a>
-
-**_Screenshot 5_**
-
-![train_classifier_2.jpg](img/train_classifier_2.jpg)
-
-<a id='starting'></a>
-
-### 3.3. Starting the web app
-
-Now that we have cleaned the data and trained our model. Now it's time to see the prediction in a user friendly way.
-
-**Go the app directory** and run the following command:
-
-<a id='com'></a>
-
-```bat
-python run.py
-```
-
-This will start the web app and will direct you to a URL where you can enter messages and get classification results for it.
-
-**_Screenshot 6_**
-
-![web_app](img/web_app.jpg)
-
-<a id='conclusion'></a>
+2. Run the following command in the app's directory to run your web app.
+    `python run.py`
 
 ## 4. Conclusion
-
-Some information about training data set as seen on the main page of the web app.
-
-**_Screenshot 7_**
-
-![genre](img/genre.jpg)
-
-**_Screenshot 8_**
-
-![dist](img/dist.jpg)
 
 As we can see the data is highly imbalanced. Though the accuracy metric is [high](#acc) (you will see the exact value after the model is trained by grid search, it is ~0.94), it has a poor value for recall (~0.6). So, take appropriate measures when using this model for decision-making process at a larger scale or in a production environment.
 
@@ -171,29 +95,25 @@ As we can see the data is highly imbalanced. Though the accuracy metric is [high
 <pre>
 .
 ├── app
-│   ├── run.py------------------------# FLASK FILE THAT RUNS APP
-│   ├── static
-│   │   └── favicon.ico---------------# FAVICON FOR THE WEB APP
+│   ├── run.py------------------------# Flask file that runs the webapp
 │   └── templates
-│       ├── go.html-------------------# CLASSIFICATION RESULT PAGE OF WEB APP
-│       └── master.html---------------# MAIN PAGE OF WEB APP
+│       ├── go.html-------------------# Displays classification results
+│       └── master.html---------------# Main page
 ├── data
-│   ├── DisasterResponse.db-----------# DATABASE TO SAVE CLEANED DATA TO
-│   ├── disaster_categories.csv-------# DATA TO PROCESS
-│   ├── disaster_messages.csv---------# DATA TO PROCESS
-│   └── process_data.py---------------# PERFORMS ETL PROCESS
-├── img-------------------------------# PLOTS FOR USE IN README AND THE WEB APP
+│   ├── DisasterResponse.db-----------# Database to store processed data
+│   ├── disaster_categories.csv-------# Raw Category Data
+│   ├── disaster_messages.csv---------# Raz Message Data
+│   └── process_data.py---------------# ETL Process
 ├── models
-│   └── train_classifier.py-----------# PERFORMS CLASSIFICATION TASK
+│   └── train_classifier.py-----------# Trains classification model
+└── snapshots-------------------------# Snapshots of website
 
 </pre>
 
-<a id='sw'></a>
+<a id='requirements'></a>
 
 ## 6. Software Requirements
 
-This project uses **Python 3.6.6** and the necessary libraries are mentioned in _requirements.txt_.
-The standard libraries which are not mentioned in _requirements.txt_ are _collections_, _json_, _operator_, _pickle_, _pprint_, _re_, _sys_, _time_ and _warnings_.
 
 <a id='credits'></a>
 
