@@ -2,15 +2,12 @@
 
 ## Table of Contents
 
-- [Project Overview](#overview)
+- [Overview](#overview)
 - [Project Components](#components)
-  - [ETL Pipeline](#etl_pipeline)
-  - [ML Pipeline](#ml_pipeline)
-  - [Flask Web App](#flask)
+  - [ETL Pipeline](#etl)
+  - [ML Pipeline](#ml)
+  - [Flask Web App](#webapp)
 - [Running](#run)
-  - [Data Cleaning](#cleaning)
-  - [Training Classifier](#training)
-  - [Starting the Web App](#starting)
 - [Conclusion](#conclusion)
 - [File Structure](#files)
 - [Software Requirements](#requirements)
@@ -20,40 +17,26 @@
 
 <a id='overview'></a>
 
-## 1. Project Overview
-
-
-[Here](#eg) are a few screenshots of the web app.
+## 1. Overview
+This project is one of the requirements for Udacity's Data Scientist Nanodegree Program. It consists on developing a ML model which is able to classify (as accurately as possible) text messages sent during disasters into response categories, and deploy it in a webapp. The dataset corresponds to real data gathered and classified by [Future Eight](https://www.figure-eight.com/) for this project.
 
 <a id='components'></a>
+## 2. Components 
 
-## 2. Project Components
-
-
-<a id='etl_pipeline'></a>
+<a id='etl'></a>
 ### 2.1. ETL Pipeline
 
-File _data/process_data.py_ contains data cleaning pipeline that:
+This pipeline corresponds to the data processing stage of the project. The code is contained in the _data/process_data.py_ file, which performs the following operations:
+- Reads the `disaster_messages.csv` and `disaster_categories.csv` files and merges them into a single dataset
+- Encodes the categories to binary category columns per message
+- Stores the resulting dataframe into the `data/DisasterResponse.db` SQL database
 
-- Loads the `messages` and `categories` dataset
-- Merges the two datasets
-- Cleans the data
-- Stores it in a **SQLite database**
-
-<a id='ml_pipeline'></a>
+<a id='ml'></a>
 ### 2.2. ML Pipeline
 
 File _models/train_classifier.py_ contains machine learning pipeline that:
 
-- Loads data from the **SQLite database**
-- Splits the data into training and testing sets
-- Builds a text processing and machine learning pipeline
-- Trains and tunes a model using GridSearchCV
-- Outputs result on the test set
-- Exports the final model as a pickle file
-
-<a id='flask'></a>
-
+<a id='webapp'></a>
 ### 2.3. Web App
 
 <a id='eg'></a>
