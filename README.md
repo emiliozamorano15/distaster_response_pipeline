@@ -62,13 +62,13 @@ Running [this command](#com) **from app directory** will start the web app where
 
 **_Screenshot 1_**
 
-![master](img/master.jpg)
+![Landing page](snapshots/main1.jpg)
 
 What the app will do is that it will classify the text message into categories so that appropriate relief agency can be reached out for help.
 
 **_Screenshot 2_**
 
-![results](img/res.jpg)
+![Visuals](snapshots/main2.jpg)
 
 <a id='run'></a>
 
