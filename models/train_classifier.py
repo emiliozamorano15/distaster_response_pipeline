@@ -2,7 +2,7 @@
 import sys
 import nltk
 nltk.download(['punkt', 'wordnet'])
-import sqlite3
+import sqlalchemy
 import re
 import numpy as np
 import pandas as pd
@@ -32,8 +32,8 @@ def load_data(database_filepath):
         table pandas dataframe
     '''
     ## Read data from DB table
-    conn = sqlite3.connect(database_filepath)
-    df = pd.read_sql("SELECT * FROM tbl_disaster_response", conn)
+    engine = create_engine(f'sqlite:///{database_filepath}')
+    df = pd.read_sql("SELECT * FROM tbl_disaster_response", engine)
     
     ## Split features and target 
     X = df.message.values
