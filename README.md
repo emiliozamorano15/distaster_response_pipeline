@@ -97,6 +97,7 @@ Due to the imbalance on the label categories certain considerations for measurin
 ├── models
 │   └── train_classifier.py-----------# Trains classification model
 ├── snapshots-------------------------# Snapshots of website
+├── LICENSE---------------------------# License file
 ├── README.md-------------------------# Readme file
 └── requirements.txt------------------# List of required packages
 </pre>
