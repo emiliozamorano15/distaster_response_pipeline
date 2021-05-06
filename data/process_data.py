@@ -1,12 +1,10 @@
 import sys
-
 import pandas as pd
 from sqlalchemy import create_engine
-import sqlite3
+
 
 def load_data(messages_filepath, categories_filepath):
-    '''
-    reads messages.csv and categories.csv into dataframes, merges them, 
+    '''reads messages.csv and categories.csv into dataframes, merges them, 
     and returns them as single data frame
     INPUTS:
         messages_filepath: str path to messages.csv
@@ -22,6 +20,12 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    ''' splits categories into columns, encodes them per message, and removes duplicates
+    INPUTS:
+        df: pandas df raw dataframe
+    OUTPUTS:
+        df: pandas df clean dataframe
+    '''
     ## Split categories into separate category columns.
     categories = df['categories'].str.split(";", expand = True)
 
@@ -46,10 +50,15 @@ def clean_data(df):
     return df
 
 def save_data(df, database_filename):
-    # engine = create_engine('sqlite:///' + database_filename)
-    # df.to_sql('tbl_disaster_response', engine, index=False)
-    conn = sqlite3.connect(database_filename)
-    df.to_sql('tbl_disaster_response', conn) 
+    ''' saves dataframe into a specific table in an existing sql database
+    INPUTS:
+        df: pandas df 
+        database_filename: path to .db file
+    OUTPUTS:
+        None
+    '''
+    engine = create_engine(f'sqlite:///{database_filename}')
+    df.to_sql('tbl_disaster_response', engine) 
     
     pass  
 
