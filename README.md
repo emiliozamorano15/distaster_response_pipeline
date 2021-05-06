@@ -1,4 +1,5 @@
-# Data Scientist Nanodegree: Disaster Response Pipeline Project
+# Data Scientist Nanodegree:
+# Disaster Response Pipeline Project
 
 ## Table of Contents
 
@@ -35,28 +36,32 @@ This pipeline corresponds to the data processing stage of the project. The code 
 ### 2.2. ML Pipeline
 
 File _models/train_classifier.py_ contains machine learning pipeline that:
+- Reads data from the database
+- Splits data into training and test sets
+- Cleans, tokenizes, and lemmatizes text messages
+- Performs NLP transformations such as vectorizing token counts and calculating tf-idf
+- Trains a Random Forest Classifier within a grid search for optimizing hyperparameters
+-  Evaluates model performance
+-  Stores a serialized version of the final model for the webapp
 
 <a id='webapp'></a>
 ### 2.3. Web App
-
-<a id='eg'></a>
-
-Running [this command](#com) **from app directory** will start the web app where users can enter their query, i.e., a request message sent during a natural disaster, e.g. _"Please, we need tents and water. We are in Silo, Thank you!"_.
+The webapp consists on a locally hosted Flask app containing two pages. The main page contains users controls to input messages for predicting:
 
 **_Screenshot 1_**
-
 ![Landing page](https://github.com/emiliozamorano15/distaster_response_pipeline/blob/main/snapshots/main1.JPG)
 
-What the app will do is that it will classify the text message into categories so that appropriate relief agency can be reached out for help.
+Additionally the main page displays two visualizations from the training set:
 
 **_Screenshot 2_**
-
 ![Visuals](https://github.com/emiliozamorano15/distaster_response_pipeline/blob/main/snapshots/main2.JPG)
 
+Once given a message for prediction, the results are displayed on the second page. The message used as an input is displayed and the predicted categories are hightlighed in blue:
+
+**_Screenshot 3_**
 ![Results](https://github.com/emiliozamorano15/distaster_response_pipeline/blob/main/snapshots/go1.JPG)
 
 <a id='run'></a>
-
 ## 3. Running
 
 1. Run the following commands in the project's root directory to set up your database and model.
@@ -74,7 +79,6 @@ What the app will do is that it will classify the text message into categories s
 As we can see the data is highly imbalanced. Though the accuracy metric is [high](#acc) (you will see the exact value after the model is trained by grid search, it is ~0.94), it has a poor value for recall (~0.6). So, take appropriate measures when using this model for decision-making process at a larger scale or in a production environment.
 
 <a id='files'></a>
-
 ## 5. Files
 
 <pre>
@@ -91,24 +95,21 @@ As we can see the data is highly imbalanced. Though the accuracy metric is [high
 │   └── process_data.py---------------# ETL Process
 ├── models
 │   └── train_classifier.py-----------# Trains classification model
-└── snapshots-------------------------# Snapshots of website
-
+├── snapshots-------------------------# Snapshots of website
+├── README.md-------------------------# Readme file
+└── requirements.txt------------------# List of required packages
 </pre>
 
 <a id='requirements'></a>
-
 ## 6. Software Requirements
-
+This project was developed with Python 3.7.10 for Windows. The required packages are listed under `requirements.txt`.
 
 <a id='credits'></a>
 
 ## 7. Credits and Acknowledgements
 
-Thanks <a href="https://www.udacity.com" target="_blank">Udacity</a> for letting me use their logo as favicon for this web app.
-
-Another <a href="https://medium.com/udacity/three-awesome-projects-from-udacitys-data-scientist-program-609ff0949bed" target="_blank">blog post</a> was a great motivation to improve my documentation. This post discusses some of the cool projects from <a href="https://in.udacity.com/course/data-scientist-nanodegree--nd025" target="_blank">Data Scientist Nanodegree</a> students. This really shows how far we can go if we apply the concepts learned beyond the classroom content to build something that inspire others.
-
-
+Many thanks to [Future Eight](https://www.figure-eight.com/) and [Udacity](https://www.udacity.com) for setting this project requirements and providing the data.
+Additional resources used to improve documentation and this README.md file can be found [here](https://medium.com/udacity/three-awesome-projects-from-udacitys-data-scientist-program-609ff0949bed).
 
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
