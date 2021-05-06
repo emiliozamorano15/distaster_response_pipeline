@@ -74,9 +74,10 @@ Once given a message for prediction, the results are displayed on the second pag
 2. Run the following command in the app's directory to run your web app.
     `python run.py`
 
+<a id='conclusion'></a>
 ## 4. Conclusion
 
-As we can see the data is highly imbalanced. Though the accuracy metric is [high](#acc) (you will see the exact value after the model is trained by grid search, it is ~0.94), it has a poor value for recall (~0.6). So, take appropriate measures when using this model for decision-making process at a larger scale or in a production environment.
+Due to the imbalance on the label categories certain considerations for measuring the performance of the prediction model. Measures such as accuracy show a higher value than other measures, *e.g.* recall. This needs to be taken into account when making decisions based on the predictions from this model. On the other hand, while training a model with imbalanced labels one could apply techniques such as over- or undersampling to adress this issue.
 
 <a id='files'></a>
 ## 5. Files
