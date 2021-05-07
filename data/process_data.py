@@ -46,7 +46,10 @@ def clean_data(df):
 
     # drop duplicates
     df.drop_duplicates(inplace = True)
-    
+
+    ## relabel column 'related' to binary values instead of multilabel
+    df.loc[df['related']==2, 'related'] = 1 
+        
     return df
 
 def save_data(df, database_filename):
