@@ -1,12 +1,13 @@
   
 import sys
 import nltk
-nltk.download(['punkt', 'wordnet'])
+nltk.download(['punkt', 'wordnet', 'stopwords'])
 from sqlalchemy import create_engine
 import re
 import numpy as np
 import pandas as pd
 import pickle
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -63,8 +64,11 @@ def tokenize(text):
     text = re.sub(r"[^a-zA-Z0-9]", " ", text) 
     
     ## tokenize text by words
-    tokens = word_tokenize(text)
+    words = word_tokenize(text)
     
+    ## remove stop words
+    tokens = [w for w in words if w not in stopwords.words('english')]
+
     ## Lemmatize each token
     lemmatizer = WordNetLemmatizer()
     clean_tokens = []
@@ -76,28 +80,27 @@ def tokenize(text):
     
 
 def build_model():
-    ''' 
-    Pipeline and grid definition for model building
-    INPUTS: none
-    OUTPUTS: a GridSearchCV object from scikitlearn
-        
+    ''' Pipeline and grid definition for model building
+    INPUTS: 
+        none
+    OUTPUTS: 
+        a GridSearchCV object from scikitlearn
     '''
     ## Create pipeline with two transformers and one estimator
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(
-            RandomForestClassifier(n_jobs=-1)
+            RandomForestClassifier(n_jobs = -1
+            , min_samples_split = 5
+            , n_estimators = 50)
             ))
     ])
     ## Define gridsearch hyperparameters
     parameters = {
-        # 'vect__ngram_range': ((1, 1), (1, 2))
-         'vect__max_df': (0.5, 1.0)
-        # , 'vect__max_features': (None, 10000)
+        'vect__ngram_range': ((1, 1), (1, 2))
+        , 'vect__max_df': (0.5, 1.0)
         , 'tfidf__use_idf': (True, False)
-        , 'clf__estimator__n_estimators': [25, 50]
-        , 'clf__estimator__min_samples_split': [2, 5, 10]
     }
     
     cv = GridSearchCV(pipeline, param_grid=parameters, cv= 3, verbose = 3)
