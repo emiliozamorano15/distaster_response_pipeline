@@ -2,7 +2,7 @@
 import sys
 import nltk
 nltk.download(['punkt', 'wordnet'])
-import sqlalchemy
+from sqlalchemy import create_engine
 import re
 import numpy as np
 import pandas as pd
