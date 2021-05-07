@@ -20,6 +20,7 @@
 
 ## 1. Overview
 This project is one of the requirements for Udacity's Data Scientist Nanodegree Program. It consists on developing a ML model which is able to classify (as accurately as possible) text messages sent during disasters into response categories, and deploy it in a webapp. The dataset corresponds to real data gathered and classified by [Future Eight](https://www.figure-eight.com/) for this project.
+The main objective is to provide assistance to response teams during disasters, by classifying texts from different sources in order to channel them to a corresponding agency/organization. In this way response times can be optimized and providing assistance can be expedited.
 
 <a id='components'></a>
 ## 2. Components 
